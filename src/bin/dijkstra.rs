@@ -79,11 +79,15 @@ impl<T: Ord> MinHeap<T> {
 }
 
 #[derive(Debug)]
-struct WeightedGraph {
+struct WeightedDirectedGraph {
     adj: Vec<Vec<(usize, usize)>>,
 }
 
-impl WeightedGraph {
+struct WeightedUndirectedGraph {
+    adj: Vec<Vec<(usize, usize)>>,
+}
+
+impl WeightedDirectedGraph {
     fn new(vertices: usize) -> Self {
         Self {
             adj: (0..vertices).map(|_| Vec::new()).collect(),
@@ -123,15 +127,62 @@ impl WeightedGraph {
     }
 }
 
+impl WeightedUndirectedGraph {
+    fn new(vertices: usize) -> Self {
+        Self {
+            adj: (0..vertices).map(|_| Vec::new()).collect(),
+        }
+    }
+
+    fn add_edge(&mut self, a: usize, b: usize, weight: usize) {
+        self.adj[a].push((b, weight));
+        self.adj[b].push((a, weight));
+    }
+
+    fn dijkstra(&self, start: usize) -> Vec<usize> {
+        let mut dist = vec![usize::MAX; self.adj.len()];
+
+        let mut min_heap = MinHeap::new();
+
+        min_heap.push((0, start));
+
+        while let Some((weight, node)) = min_heap.pop() {
+            if weight < dist[node] {
+                dist[node] = weight;
+
+                for &(n_node, n_weight) in &self.adj[node] {
+                    let new_distance = weight + n_weight;
+                    if new_distance < dist[n_node] {
+                        min_heap.push((new_distance, n_node));
+                    }
+                }
+            }
+        }
+
+        dist
+    }
+}
+
 fn main() {
-    let mut graph = WeightedGraph::new(4);
-    graph.add_edge(0, 1, 4);
-    graph.add_edge(0, 2, 1);
-    graph.add_edge(1, 3, 2);
-    graph.add_edge(2, 3, 5);
+    let mut directed_graph = WeightedDirectedGraph::new(4);
+    directed_graph.add_edge(0, 1, 4);
+    directed_graph.add_edge(0, 2, 1);
+    directed_graph.add_edge(1, 3, 2);
+    directed_graph.add_edge(2, 3, 5);
 
     println!(
         "Shortes path to all node from node 0 is: {:?}",
-        graph.dijkstra(0)
+        directed_graph.dijkstra(0)
+    );
+
+    let mut undirected_graph = WeightedUndirectedGraph::new(4);
+    undirected_graph.add_edge(0, 1, 4);
+    undirected_graph.add_edge(0, 2, 1);
+    undirected_graph.add_edge(1, 3, 2);
+    undirected_graph.add_edge(2, 3, 5);
+
+    println!(
+        "\n\nShortes path to all node from node 0 is: {:?}",
+        undirected_graph.dijkstra(0)
     );
 }
