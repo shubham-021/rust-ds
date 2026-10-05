@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 struct Node {
     value: i32,
     next: Option<Box<Node>>,

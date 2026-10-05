@@ -103,8 +103,23 @@ impl Trie {
 
 fn main() {
     let mut mt = Trie::new();
+    mt.insert("cat");
+    mt.insert("car");
     mt.insert("catty");
-    mt.insert("cappy");
+    mt.insert("dog");
+    mt.insert("canteen");
 
-    println!("Cat matches: {}", mt.matches("car"));
+    println!("Cat exists: {}", mt.exists("cat"));
+    println!("Can exists: {}", mt.exists("can"));
+    println!("Can matches: {}", mt.matches("can"));
+    println!("caRe exists: {}", mt.exists("caRe"));
+    println!("cAT exists: {}", mt.exists("cAT"));
+    println!("do exists: {}", mt.exists("do"));
+    println!("catty matches: {}", mt.matches("catty"));
+
+    mt.delete("cat");
+    println!("\n\nAfter deleting cat: \n\n");
+    println!("Cat exists: {}", mt.exists("cat"));
+    println!("Cat matches: {}", mt.matches("cat"));
+    println!("Catty exists: {}", mt.exists("catty"));
 }
